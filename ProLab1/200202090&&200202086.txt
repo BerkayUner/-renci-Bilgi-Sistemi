@@ -1,0 +1,358 @@
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+#define OGRENCI_LIMIT 50
+#define CHAR_LIMIT 256
+struct ogrenci
+{
+int no;
+int kod;
+int puan;
+int *noadres;
+
+};
+
+struct index
+{
+
+ int no;
+ int *noadres;
+
+};
+void swap(char table[][CHAR_LIMIT], int r1, int r2) {
+    char tmp[CHAR_LIMIT];
+    size_t size = sizeof(tmp);
+
+    memcpy(tmp, table[r1], size);
+    memcpy(table[r1], table[r2], size);
+    memcpy(table[r2], tmp, size);
+}
+
+
+
+
+main()
+{
+struct ogrenci ogr[OGRENCI_LIMIT];
+ogr[0].no=-1;
+struct index ind[OGRENCI_LIMIT];
+ind[0].no=-1;
+
+
+
+menu_bas();
+int s;
+scanf("%d",&s);
+int kont=0;
+while(kont!=1)
+{
+ switch(s)
+ {
+ case 1:
+  kayit_ekle(ogr);
+  break;
+  case 2:
+   index_olustur(ind);
+   break;
+   case 3:
+   kayit_bul(ind,ogr);
+   break;
+
+   case 4:
+   //kayit_guncelle();
+   break;
+   case 5:
+    //kayit_sil();
+    break;
+    case 6:
+     veri_goster(ogr);
+     break;
+     case 7:
+      index_goster(ind);
+      break;
+      case 8:
+       index_sil(ind);
+       case 9:
+        kont=1;
+        printf("cikis yapiliyor");
+        break;
+        default:
+         printf("yanlis secim yaptiniz!");
+
+
+
+ }
+ getch();
+
+}
+
+
+}
+
+void menu_bas()
+{
+ system("cls");
+printf("1:kayit ekle\n2:index dosyasi olustur\n3:kayit bul\n4:kayit guncelle\n");
+printf("5:kayit sil\n6:veri dosyasini goster\n");
+printf("7:index dosyasini goster\n8:index dosyasini sil\n9:cikis yap\n");
+printf("secim yapiniz:");
+
+
+
+}
+
+void kayit_ekle(struct ogrenci*ogr)
+{
+ FILE*dosya;
+ dosya=fopen("kayit.bin","ab");
+ int i;
+
+ for(i=0;i<OGRENCI_LIMIT;i++)
+ {
+  if(ogr[i].no==-1)
+  break;
+
+
+
+ }
+   printf("ogrenci numarasini giriniz:");
+  scanf("%d",&ogr[i].no);
+  printf("ders kodunu giriniz:");
+  scanf("%d",&ogr[i].kod);
+  printf("ogrenci puanini giriniz:");
+  scanf("%d",&ogr[i].puan);
+        fwrite(&ogr[i].noadres,sizeof(struct ogrenci),1,dosya);
+  fwrite(&ogr[i].no,sizeof(struct ogrenci),1,dosya);
+   fwrite(&ogr[i].kod,sizeof(struct ogrenci),1,dosya);
+   fwrite(&ogr[i].puan,sizeof(struct ogrenci),1,dosya);
+
+
+
+
+ogr[i+1].no=-1;
+
+ fclose(dosya);
+
+ dosya=fopen("index.txt","a");
+    fprintf(dosya,"%d\t%p\n",ogr[i].no,ogr[i].noadres);
+
+        fclose(dosya);
+         sirala();
+
+}
+
+void veri_goster(struct ogrenci*ogr)
+{
+
+ FILE*dosya;
+ dosya=fopen("kayit.bin","rb");
+ if(dosya==NULL)
+ {
+  printf("dosya bulunamadi");
+
+ }
+ else
+ {
+  int i=0;
+
+  while(!feof(dosya))
+  {
+       fread(&ogr[i].noadres,sizeof(struct ogrenci),1,dosya);
+                fread(&ogr[i].no,sizeof(struct ogrenci),1,dosya);
+    fread(&ogr[i].kod,sizeof(struct ogrenci),1,dosya);
+    fread(&ogr[i].puan,sizeof(struct ogrenci),1,dosya);
+    printf("%d\t%d \t%d\t %p\n ",ogr[i].no,ogr[i].kod,ogr[i].puan,ogr[i].noadres);
+    i++;
+
+
+  }
+ }
+
+
+
+ fclose(dosya);
+
+
+}
+
+void index_olustur(struct index*ind)
+{
+ FILE*dosya;
+ dosya=fopen("index.txt","a");
+ int i;
+ for(i=0;i<OGRENCI_LIMIT;i++)
+ {
+  if(ind[i].no==-1)
+  break;
+ }
+
+ printf("ogrenci numarasi giriniz:");
+ scanf("%d",&ind[i].no);
+ fprintf(dosya,"%d\t%p\n",ind[i].no,ind[i].noadres);
+
+ fclose(dosya);
+
+        sirala();
+
+}
+
+void sirala(){
+    FILE*dosya;
+dosya=fopen("index.txt","r");
+    int A[OGRENCI_LIMIT];
+    char B[OGRENCI_LIMIT][CHAR_LIMIT];
+    char line[CHAR_LIMIT];
+    int line_index=0;
+    while (fgets(line, sizeof(line), dosya)) {
+
+
+        sscanf(line,"%d\t%s\n",&A[line_index],B[line_index]);
+
+    line_index++;
+    }
+
+    fclose(dosya);
+    dosya=fopen("index.txt","r");
+    int j,gecici;
+
+
+    for(int i=0;i<line_index;i++){
+        for(j=0;j<line_index;j++){
+            if(A[i]<A[j]){
+
+                //swap
+                gecici=A[i];
+                A[i]=A[j];
+                A[j]=gecici;
+
+                // B swap
+
+                swap(B,i,j);
+
+
+
+
+            }
+        }
+    }
+
+    fclose(dosya);
+
+
+     dosya=fopen("index.txt","w");
+
+      for(int i=0;i<line_index;i++){
+        sprintf(line,"%d\t%s\n",A[i],B[i]);
+        fputs(line,dosya);
+
+    }
+     fclose(dosya);}
+
+
+void index_goster(struct index*ind)
+{
+ FILE*dosya;
+ dosya=fopen("index.txt","r+");
+ if(dosya==NULL)
+ {
+  printf("dosya bulunamadi!");
+
+ }
+ else
+
+{
+
+  int i=0;
+ while(!feof(dosya))
+ {
+     fscanf(dosya,"%d %p ",&ind[i].no,&ind[i].noadres);
+  printf("%d %p\n ",ind[i].no,ind[i].noadres);
+  i++;
+
+
+ }
+
+
+
+}
+
+
+
+
+fclose(dosya);
+
+
+
+}
+
+void index_sil(struct index*ind)
+{
+ int sonuc = remove("index.txt");
+
+  if(sonuc == 0){
+    fprintf(stdout, "Dosya silindi");
+  } else {
+    fprintf(stderr, "Dosya silinemedi");
+    return -1;
+  }
+}
+
+void kayit_bul(struct index*ind,struct ogrenci*ogr)
+{
+   FILE*dosya;
+   dosya=fopen("index.txt","r");
+   int c, first, last, middle, search;
+   int line_index=0;
+   char line[CHAR_LIMIT];
+   int A[OGRENCI_LIMIT];
+   char B[OGRENCI_LIMIT][CHAR_LIMIT];
+   char C[OGRENCI_LIMIT][CHAR_LIMIT];
+       while (fgets(line, sizeof(line), dosya)) {
+
+
+        sscanf(line,"%d\n",&A[line_index]);
+
+    line_index++;
+       }
+  printf("ogrenci no giriniz:\n");
+  scanf("%d", &search);
+
+  first = 0;
+  last = line_index - 1;
+  middle = (first+last)/2;
+
+  while (first <= last) {
+    if (A[middle] < search)
+      first = middle + 1;
+    else if (A[middle] == search) {
+      printf("%d , %d. indexte bulundu.\n", search, middle+1);
+
+      break;
+    }
+    else
+      last = middle - 1;
+
+    middle = (first + last)/2;
+  }
+
+  if (first > last)
+    printf("Bulunamadi! %d isn't present in the list.\n", search);
+   fclose(dosya);
+
+   dosya=fopen("kayit.bin","r");
+
+  for (int c = 0; c < line_index; c++)
+    fscanf(dosya,"%d\n", &C[c]);
+
+  for (c = 0; c < line_index; c++)
+  {
+    if (C[c] == search)
+    {
+      printf("%d is present at location %d.\n", C[c], c+1);
+      break;
+    }
+  }
+
+fclose(dosya);
+  return 0;
+}
