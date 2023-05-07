@@ -1,1 +1,1 @@
-# -renci-Bilgi-Sistemi
+#Öğrenci-Bilgi-sistemi
