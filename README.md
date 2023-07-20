@@ -1,1 +1,1 @@
-# Oğrenci-Bilgi-sistemi
+# Oğrenci_Bilgi_Sistem
