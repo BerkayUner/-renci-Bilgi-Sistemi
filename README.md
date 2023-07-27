@@ -1,1 +1,1 @@
-# Oğrenci_Bilgi_Sistem
+# Ogrenci_Bilgi_Sistem
